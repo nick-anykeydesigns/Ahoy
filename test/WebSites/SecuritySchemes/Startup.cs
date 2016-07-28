@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Builder;
-using Swashbuckle.Swagger.Model;
 using SecuritySchemes.Swagger;
+using Swashbuckle.Swagger.Model;
+using System.Collections.Generic;
 
 namespace SecuritySchemes
 {
@@ -24,21 +24,22 @@ namespace SecuritySchemes
             // services.AddWebApiConventions();
 
             services.AddSwaggerGen(c =>
-            {
-                c.AddSecurityDefinition("oauth2", new OAuth2Scheme
                 {
-                    Type = "oauth2",
-                    Flow = "implicit",
-                    AuthorizationUrl = "http://petstore.swagger.io/api/oauth/dialog",
-                    Scopes = new Dictionary<string, string>
+                    c.AddSecurityDefinition("oauth2", new OAuth2Scheme
+                    {
+                        Type = "oauth2",
+                        Flow = "implicit",
+                        AuthorizationUrl = "https://login.microsoftonline.com/a517fbdd-6b74-48c7-b4eb-2e43fb64a8aa/oauth2/authorize",
+                        Scopes = new Dictionary<string, string>
                         {
                             { "read", "read access" },
                             { "write", "write access" }
                         }
-                });
+                    });
 
-                c.OperationFilter<AssignSecurityRequirements>();
-            });
+                    c.OperationFilter<AssignSecurityRequirements>();
+                }
+            );
         }
 
         // Configure is called after ConfigureServices is called.
@@ -49,6 +50,12 @@ namespace SecuritySchemes
 
             // Configure the HTTP request pipeline.
             app.UseStaticFiles();
+
+            app.UseJwtBearerAuthentication(new JwtBearerOptions
+            {
+                Authority = "https://login.microsoftonline.com/a517fbdd-6b74-48c7-b4eb-2e43fb64a8aa",
+                Audience = "dd38b110-398d-4265-b99f-82004d69d442"
+            });
 
             // Add MVC to the request pipeline.
             app.UseMvc();

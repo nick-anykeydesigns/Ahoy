@@ -1,13 +1,14 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace SecuritySchemes.Controllers
 {
     [Route("/products")]
     [Produces("application/json")]
     [Authorize(Roles = "read")]
+    //[Authorize]
     public class OAuthProtectedController
     {
         [HttpPost()]
